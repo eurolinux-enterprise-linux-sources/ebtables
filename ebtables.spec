@@ -2,7 +2,7 @@
 
 Name:			ebtables
 Version:		2.0.10
-Release:		15%{?dist}
+Release:		16%{?dist}
 Summary:		Ethernet Bridge frame table administration tool
 License:		GPLv2+
 Group:			System Environment/Base
@@ -17,6 +17,7 @@ Patch4:			ebtables-2.0.10-linkfix.patch
 Patch5:			ebtables-2.0.0-audit.patch
 Patch6:			ebtables-2.0.10-noflush.patch
 Patch7:			ebtables-2.0.10-lockdirfix.patch
+Patch8:			ebtables-2.0.10-flock.patch
 BuildRequires:		systemd-units
 Requires(post):		systemd
 Requires(preun):	systemd
@@ -42,6 +43,7 @@ like iptables. There are no known incompatibility issues.
 %patch5 -p1 -b .AUDIT
 %patch6 -p1 -b .noflush
 %patch7 -p1 -b .lockdir
+%patch8 -p1 -b .flock
 
 # Convert to UTF-8
 f=THANKS; iconv -f iso-8859-1 -t utf-8 $f -o $f.utf8 ; mv $f.utf8 $f
@@ -98,6 +100,9 @@ mv %{buildroot}/%{_lib}/ebtables/libebtc.so %{buildroot}/%{_lib}/
 %ghost %{_sysconfdir}/sysconfig/ebtables.broute
 
 %changelog
+* Wed Oct 25 2017 Phil Sutter <psutter@redhat.com> - 2.0.10-16
+- Fix for potentially stale lock files (RHBZ#1495893)
+
 * Thu Jun 30 2016 Thomas Woerner <twoerner@redhat.com> - 2.0.10-15
 - Backported lockdirfix to use (/var)/run from Fedora (RHBZ#1346376)
 

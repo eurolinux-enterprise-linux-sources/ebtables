@@ -1,6 +1,6 @@
 Name:			ebtables
 Version:		2.0.9
-Release:		5%{?dist}
+Release:		6%{?dist}
 Summary:		Ethernet Bridge frame table administration tool
 License:		GPLv2+
 Group:			System Environment/Base
@@ -14,6 +14,7 @@ Patch1:			ebtables-2.0.8-cflags.patch
 Patch2:			ebtables-2.0.8-buildid.patch
 Patch3:			ebtables-2.0.9-lsb.patch
 Patch4:			ebtables-2.0.9-ethertypes.patch
+Patch5:			ebtables-2.0.9-ebt_AUDIT_v1.patch
 
 %description
 Ethernet bridge tables is a firewalling tool to transparently filter network
@@ -33,6 +34,7 @@ like iptables. There are no known incompatibility issues.
 %patch2 -p1
 %patch3 -p1 -b .lsb
 %patch4 -p1 -b .ethertypes
+%patch5 -p1 -b .ebt_AUDIT_v1
 
 # Convert to UTF-8
 f=THANKS; iconv -f iso-8859-1 -t utf-8 $f -o $f.utf8 ; mv $f.utf8 $f
@@ -83,6 +85,10 @@ fi
 %ghost %{_sysconfdir}/sysconfig/ebtables.broute
 
 %changelog
+* Fri Jan  7 2011 Thomas Woerner <twoerner@redhat.com> - 2.0.9-6
+- added auditing support (rhbz#642394)
+  Thanks to Thomas Graf for the patch
+
 * Thu May 27 2010 Thomas Woerner <twoerner@redhat.com> - 2.0.9-5
 - added -fno-strict-aliasing to the compiler flags (rhbz#596158)
 - cleaned up description (rhbz#596158)

@@ -2,7 +2,7 @@
 
 Name:			ebtables
 Version:		2.0.10
-Release:		13%{?dist}
+Release:		15%{?dist}
 Summary:		Ethernet Bridge frame table administration tool
 License:		GPLv2+
 Group:			System Environment/Base
@@ -15,6 +15,8 @@ Patch0:			ebtables-2.0.10-norootinst.patch
 Patch3:			ebtables-2.0.9-lsb.patch
 Patch4:			ebtables-2.0.10-linkfix.patch
 Patch5:			ebtables-2.0.0-audit.patch
+Patch6:			ebtables-2.0.10-noflush.patch
+Patch7:			ebtables-2.0.10-lockdirfix.patch
 BuildRequires:		systemd-units
 Requires(post):		systemd
 Requires(preun):	systemd
@@ -38,6 +40,8 @@ like iptables. There are no known incompatibility issues.
 # extension modules need to link to libebtc.so for ebt_errormsg
 %patch4 -p1 -b .linkfix
 %patch5 -p1 -b .AUDIT
+%patch6 -p1 -b .noflush
+%patch7 -p1 -b .lockdir
 
 # Convert to UTF-8
 f=THANKS; iconv -f iso-8859-1 -t utf-8 $f -o $f.utf8 ; mv $f.utf8 $f
@@ -48,7 +52,7 @@ make %{?_smp_mflags} CFLAGS="${RPM_OPT_FLAGS}" LIBDIR="/%{_lib}/ebtables" BINDIR
 %install
 mkdir -p %{buildroot}%{_initrddir}
 mkdir -p %{buildroot}%{_unitdir}
-install -p %{SOURCE3} %{buildroot}%{_unitdir}/
+install -m 644 -p %{SOURCE3} %{buildroot}%{_unitdir}/
 mkdir -p %{buildroot}%{_libexecdir}
 install -m0755 %{SOURCE2} %{buildroot}%{_libexecdir}/ebtables
 mkdir -p %{buildroot}%{_sysconfdir}/sysconfig
@@ -94,6 +98,13 @@ mv %{buildroot}/%{_lib}/ebtables/libebtc.so %{buildroot}/%{_lib}/
 %ghost %{_sysconfdir}/sysconfig/ebtables.broute
 
 %changelog
+* Thu Jun 30 2016 Thomas Woerner <twoerner@redhat.com> - 2.0.10-15
+- Backported lockdirfix to use (/var)/run from Fedora (RHBZ#1346376)
+
+* Tue May 17 2016 Thomas Woerner <twoerner@redhat.com> - 2.0.10-14
+- Fixed persmissions of ebtables.service (RHBZ#1288586)
+- Added upstream patch to add noflush option to ebtables-restore (RHBZ#1334271)
+
 * Tue Mar 04 2014 Jiri Popelka <jpopelka@redhat.com> - 2.0.10-13
 - do not eviscerate -fstack-protector(-strong) from CFLAGS (#1070801)
 
